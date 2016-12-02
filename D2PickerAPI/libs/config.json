@@ -1,0 +1,11 @@
+{
+  "env": "dev",
+  "dev": {
+    "host": "localhost",
+    "database": "d2picker",
+    "username": "root",
+    "password": "1234",
+    "port": "5000",
+    "timezone": "Asia/Tel_Aviv"
+  }
+}
