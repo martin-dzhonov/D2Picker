@@ -9,41 +9,20 @@ module.exports = {
           primaryKey: true,
           autoIncrement: true
         },
-        device_id: {
-          type: Sequelize.STRING
-        },
-        name: {
-          type: Sequelize.STRING,
-          allowNull: false
-        },
         email: {
           type: Sequelize.STRING,
           allowNull: false
         },
-        phone: {
+        salt: {
           type: Sequelize.STRING,
-          unique: false
-        },
-        code: {
-          type: Sequelize.TEXT
-        },
-        auth_key: {
-          type: Sequelize.TEXT,
           allowNull: false
         },
-        is_active: {
-          type: Sequelize.BOOLEAN,
-          defaultValue: false
-        },
-        avatar: {
-          type: Sequelize.STRING
-        },
-        createdAt: {
-          type: Sequelize.DATE,
+        hash: {
+          type: Sequelize.STRING,
           allowNull: false
         },
-        updatedAt: {
-          type: Sequelize.DATE,
+        token: {
+          type: Sequelize.STRING,
           allowNull: false
         }
       },

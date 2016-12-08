@@ -1,0 +1,8 @@
+<div ng-repeat="hero in heroes" ng-click='hero.toggled = !hero.toggled; $event.stopPropagation();'>
+  <div style="padding:5px; border-top:1px solid black;">{{hero.name}}</div>
+  <div ng-show='hero.toggled' ng-click="$event.stopPropagation();">
+    <input type='text' ng-model='category.name'\>
+    <button ng-click='submitCategory(hero.id)'>Submit</button>
+  </div>
+  <div ng-show='hero.toggled' ng-click="$event.stopPropagation();" ng-repeat='category in categories'>{{category.name}}</div>
+</div>

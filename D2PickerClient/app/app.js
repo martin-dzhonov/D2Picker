@@ -1,24 +1,22 @@
 'use strict';
 
-// Declare app level module which depends on views, and components
-var app = angular.module('myApp', [
-  'ngRoute',
-  'myApp.view1',
-  'myApp.view2',
-  'myApp.version',
-  'myApp.heroes.service'
-]).
+var app = angular.module('d2p', ['ngRoute','d2p.homecontroller','d2p.registercontroller','d2p.logincontroller','d2p.api', 'd2p.config', 'd2p.localstorage']).
 config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
-  $locationProvider.hashPrefix('!');
 
-  $routeProvider.when('/view1', {
-    templateUrl: 'view1/view1.html',
-    controller: 'View1Ctrl'
+  $routeProvider
+  .when('/login', {
+    templateUrl: 'login/login.html',
+    controller: 'LoginController'
   })
-  .when('/view2', {
-    templateUrl: 'view2/view2.html',
-    controller: 'View2Ctrl'
-  });;
+  .when('/register', {
+    templateUrl: 'register/register.html',
+    controller: 'RegisterController'
+  })
+  .when('/home', {
+    templateUrl: 'home/home.html',
+    controller: 'HomeController'
+  });
 
-  $routeProvider.otherwise({redirectTo: '/view1'});
+  // $routeProvider.otherwise({redirectTo: '/login'});
+
 }]);
