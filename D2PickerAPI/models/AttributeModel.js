@@ -1,9 +1,6 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(db) {
-  var User = require("./UserModel")(db);
-  var Hero = require("./HeroModel")(db);
-  var Category = require("./CategoryModel")(db);
 
   var Attribute = db.define('attributes', {
     id: {
@@ -40,9 +37,6 @@ module.exports = function(db) {
     timestamps: false
   });
 
-  Attribute.hasOne(User, { foreignKey: 'id', targetKey: 'user_id'});
-  Attribute.hasOne(Hero, { foreignKey: 'id', targetKey: 'hero_id'});
-  Attribute.hasOne(Category, { foreignKey: 'id', targetKey: 'category_id'});
 
   return Attribute;
 }

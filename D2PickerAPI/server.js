@@ -2,23 +2,21 @@ var express = require('express');
 var config = require('./libs/config.json');
 var path = require('path');
 var app = express();
-var express = require('express');
-var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var cors = require('cors')
+var cors = require('cors');
 var heroes = require('./libs/heroes.json');
-var attributes = require('./libs/attributes.js');
 var db = require('./libs/DBConnect.js');
 var User = require("./models/UserModel.js")(db);
 var Hero = require("./models/HeroModel.js")(db);
 var Category = require("./models/CategoryModel.js")(db);
 var Attribute = require("./models/AttributeModel.js")(db);
+
+
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(cors());
 
 require('./src/users')(app);
-
 var attributes = [
   [
     {
@@ -193,25 +191,25 @@ function createCategories() {
           console.log(name);
           var index = names.indexOf(name);
           var subattr = attributes[index];
-          for (var j = 0; j < subattr.length; j++) {
-            var attribute = subattr[j];
-            Attribute.create({
-              user_id: 1,
-              hero_id: 1,
-              category_id: category.id,
-              type: attribute.type,
-              value: attribute.value,
-              name: attribute.name
-            })
+          for (var k = 0; k < heroes.length; k++) {
+              for (var j = 0; j < subattr.length; j++) {
+                var attribute = subattr[j];
+                Attribute.create({
+                  user_id: 1,
+                  hero_id: k+1,
+                  category_id: category.id,
+                  type: attribute.type,
+                  value: attribute.value,
+                  name: attribute.name
+                })
+              }
           }
     })
   }
 }
 function createAttributes(){
-
     for (var i = 0; i < attributes.length; i++) {
       var subattr = attributes[i];
-      console.log(subattr);
       for (var j = 0; j < subattr.length; j++) {
         var attribute = subattr[j];
         Attribute.create({
@@ -227,8 +225,8 @@ function createAttributes(){
 }
 
 app.get('/test', function(req,res){
-  // createHeroes();
-  //createCategories();
+  //createHeroes();
+  createCategories();
   // createAttributes();
 })
 app.get('/heroes', function(req,res){
@@ -237,64 +235,42 @@ app.get('/heroes', function(req,res){
   })
 })
 
-app.get('/getHeroInfo', function(req,res){
-  var token = req.get('Authentication-Token');
-  var hero_id = 1;//req.body.hero_id;
+app.post('/getHeroInfo', function(req,res){
+  var hero_id = req.body.hero_id;
+  Category.findAll({
+    include: [
+     { model: Attribute, where: { hero_id: hero_id }}
+    ]
+  }).then(function(result){
+    res.send(result);
+  })
 
-  User.findOne({
+});
+
+app.post('/updateAttributes', function(req, res){
+  var attribute = req.body.attribute;
+  var value = attribute.value;
+  if(attribute.type == "bool"){
+    if(attribute.value == true){ value = 1; }
+    else{ value = 0; }
+  }
+
+  Attribute.update({
+    value: value
+  },
+  {
     where: {
-      token: token
+      id: attribute.id
+    }
+  }).then(function(result){
+    if (result[0] == 1) {
+      return res.status(200).json({message: result});
+    }
+    else{
+      return res.status(400).json({message: "Could not update attribute"});
     }
   })
-  .then(function(user){
-    var currentUser = user;
-    //var categories = Category.findAll();
-      Category.findAll({ include: [{ all: true }]}).then(function(users) {
-    console.log(JSON.stringify(users))
-
-    /*
-      [{
-        "name": "John Doe",
-        "id": 1,
-        "createdAt": "2013-03-20T20:31:45.000Z",
-        "updatedAt": "2013-03-20T20:31:45.000Z",
-        "Instruments": [{
-          "name": "Toothpick",
-          "id": 1,
-          "createdAt": null,
-          "updatedAt": null,
-          "userId": 1
-        }]
-      }]
-    */
-    })
-    //return Promise.all([currentUser, categories]);
-
-  // .then(function(callback){
-  //   var currentUser = callback[0];
-  //   var categories = callback[1];
-  //   var attributes = Attribute.findAll({
-  //     where: {
-  //       user_id: currentUser.id,
-  //       hero_id: hero_id
-  //     }
-  //   });
-  //   return Promise.all([currentUser, categories, attributes]);
-  // })
-  // .then(function(callback){
-  //   var currentUser = callback[0];
-  //   var categories = callback[1];
-  //   var attributes = callback[2];
-  //   var categories2 = [];
-  //   for (var i = 0; i < categories.length; i++) {
-  //     categories2.push(categories[i]);
-  //   }
-  //
-  //   return res.status(200).json(categories);
-  // })
-
 })
-});
 
 app.post('/categories', function(req,res){
   var token = req.get('Authentication-Token');
@@ -315,9 +291,9 @@ app.post('/categories', function(req,res){
     })
   });
 })
+
 var environment = config.env;
 var credentials = config[environment];
 app.listen(credentials.port);
-
 
 console.log("Running at Port " + credentials.port);

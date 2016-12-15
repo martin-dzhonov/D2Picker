@@ -44,7 +44,7 @@ angular.module('d2p.api', [])
         options.transformRequest = angular.identity;
       }
       var token = localStorageModule.get(d2pconfig.access_token);
-      console.log(token);
+      // console.log(token);
       if (token) {
         headers["Authentication-Token"] = token;
       }

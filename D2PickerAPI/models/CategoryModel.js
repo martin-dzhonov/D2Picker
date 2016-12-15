@@ -1,9 +1,7 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(db) {
-  var User = require("./UserModel")(db);
-  var Hero = require("./HeroModel")(db);
-  var Attribute = require("./AttributeModel.js")(db);
+  var Attribute = require("./AttributeModel")(db);
 
   var Category = db.define('categories', {
     id: {
@@ -20,8 +18,7 @@ module.exports = function(db) {
     timestamps: false
   });
 
-  Attribute.belongsTo(Category)
-Category.hasMany(Attribute);
+  Category.hasMany(Attribute, {foreignKey: 'category_id'});
 
   return Category;
 }
